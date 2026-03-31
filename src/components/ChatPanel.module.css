@@ -81,6 +81,19 @@
   flex-shrink: 0;
 }
 
+.loadingDot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--brand);
+  border-top-color: transparent;
+  flex-shrink: 0;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .coords {
   font-size: 12px;
   color: var(--text-muted);

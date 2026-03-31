@@ -15,6 +15,7 @@ export default function App() {
   const [showHint, setShowHint]       = useState(true)
   const [location, setLocation]       = useState(null)
   const [zoning, setZoning]           = useState(null)
+  const [loadingZone, setLoadingZone] = useState(false)
 
   function enterApp() {
     setAppStarted(true)
@@ -26,9 +27,9 @@ export default function App() {
     setShowFab(false)
     setChatOpen(true)
 
-    // Set a loading zoning state so panel shows immediately
     setLocation({ latitude: lat, longitude: lng })
-    setZoning({ zoneName: t(language, 'loading') })
+    setZoning(null)
+    setLoadingZone(true)
 
     try {
       const res  = await fetch(`${API_BASE_URL}/zoning/location?lat=${lat}&lng=${lng}`)
@@ -41,6 +42,8 @@ export default function App() {
       }
     } catch {
       setZoning({ zoneName: 'Unknown Zone' })
+    } finally {
+      setLoadingZone(false)
     }
   }, [language])
 
@@ -91,6 +94,7 @@ export default function App() {
         language={language}
         location={location}
         zoning={zoning}
+        loadingZone={loadingZone}
         open={chatOpen}
         onClose={closeChat}
       />

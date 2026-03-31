@@ -10,7 +10,7 @@ const SESSION_ID = 'web_' + Date.now() + '_' + Math.random().toString(36).substr
 const isDesktop = () => window.innerWidth >= 768
 
 const ChatPanel = forwardRef(function ChatPanel(
-  { language, location, zoning, open, onClose },
+  { language, location, zoning, loadingZone, open, onClose },
   ref
 ) {
   const panelRef   = useRef(null)
@@ -31,14 +31,13 @@ const ChatPanel = forwardRef(function ChatPanel(
     if (messagesRef.current) messagesRef.current.scrollTop = messagesRef.current.scrollHeight
   }, [])
 
-  // Clear messages when new location tapped
+  // Show welcome only when real zone data arrives (not loading state)
   useEffect(() => {
-    if (!zoning || !location) return
+    if (!zoning || !location || loadingZone) return
     stopTypewriter()
     setMessages([])
     setShowActions(false)
     setLastResponse(null)
-    // Show welcome system message then typewrite welcome
     const welcomeText = t(language, 'welcome', zoning.zoneName)
     addAnimatedMessage(welcomeText)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,8 +191,11 @@ const ChatPanel = forwardRef(function ChatPanel(
         </button>
         <div className={styles.info}>
           <div className={styles.zoneName}>
-            <span className={styles.zoneDot} style={{ background: zoneColor }} />
-            <span>{zoning?.zoneName || 'Loading...'}</span>
+            {loadingZone
+              ? <span className={styles.loadingDot} />
+              : <span className={styles.zoneDot} style={{ background: zoneColor }} />
+            }
+            <span>{loadingZone ? t(language, 'loading') : (zoning?.zoneName || '—')}</span>
           </div>
           {location && (
             <div className={styles.coords}>
