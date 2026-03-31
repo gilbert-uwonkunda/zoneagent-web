@@ -1,0 +1,161 @@
+@import 'leaflet/dist/leaflet.css';
+
+:root {
+  --bg: #0F172A;
+  --surface: #1E293B;
+  --surface-hover: #273449;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --text: #FFFFFF;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --brand: #14B8A6;
+  --brand-hover: #0D9488;
+  --brand-light: #5EEAD4;
+  --brand-glow: rgba(20, 184, 166, 0.25);
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-full: 100px;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --transition: 0.2s ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background: #000;
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: var(--font);
+  cursor: pointer;
+}
+
+/* Leaflet overrides */
+.leaflet-container { background: #0a0e1a; }
+.leaflet-control-attribution {
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: var(--text-secondary) !important;
+  font-size: 10px !important;
+  padding: 4px 8px !important;
+  border-radius: 6px 0 0 0 !important;
+}
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: var(--shadow) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+.leaflet-control-zoom a {
+  background: var(--surface) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  font-size: 18px !important;
+}
+.leaflet-control-zoom a:last-child { border-bottom: none !important; }
+.leaflet-control-zoom a:hover { background: var(--surface-hover) !important; }
+.leaflet-bottom.leaflet-right { bottom: 100px; right: 16px; }
+
+@media (min-width: 768px) {
+  .leaflet-bottom.leaflet-right { bottom: 100px; right: 24px; }
+}
+
+/* Message content formatting */
+.message-content { white-space: pre-wrap; word-wrap: break-word; }
+.message-content h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-light);
+  margin: 16px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.message-content h4:first-child { margin-top: 0; }
+.message-content p { margin: 0 0 12px 0; }
+.message-content p:last-child { margin-bottom: 0; }
+.message-content ul { margin: 8px 0 12px 0; padding-left: 20px; }
+.message-content li { margin-bottom: 6px; }
+.message-content strong { font-weight: 600; }
+
+.message-divider {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  margin-right: 6px;
+}
+.status-badge.success { background: rgba(34,197,94,0.15); color: var(--success); }
+.status-badge.error   { background: rgba(239,68,68,0.15);  color: var(--error);   }
+.status-badge.warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--brand);
+  margin-left: 2px;
+  animation: blink 0.7s infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0);   opacity: 0.5; }
+  30%           { transform: translateY(-6px); opacity: 1;   }
+}
