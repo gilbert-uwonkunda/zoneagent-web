@@ -223,7 +223,7 @@ const ChatPanel = forwardRef(function ChatPanel(
               </svg>
             </div>
             <div className={styles.thinkingText}>
-              <span className={styles.thinkingLabel}>TerraNebular is thinking</span>
+              <span className={styles.thinkingLabel}>Analyzing your plot against 2020 Master Plan...</span>
               <div className={styles.thinkingDots}>
                 <span/><span/><span/>
               </div>
