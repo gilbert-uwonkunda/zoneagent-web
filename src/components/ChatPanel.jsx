@@ -6,6 +6,7 @@ import { ZONE_COLORS, API_BASE_URL } from '../constants/zoneColors'
 import { getZoneParams, ZONE_TYPE_COLORS } from '../constants/zoneParams'
 import { useTypewriter, formatMessage } from '../hooks/useTypewriter'
 import { useDraggable } from '../hooks/useDraggable'
+import { useOnline } from '../hooks/usePWA'
 import styles from './ChatPanel.module.css'
 
 const SESSION_ID = 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
@@ -35,6 +36,7 @@ const ChatPanel = forwardRef(function ChatPanel(
 
   const { type: typewrite, stop: stopTypewriter } = useTypewriter()
   const { onMouseDown } = useDraggable(panelRef, headerRef, isDesktop())
+  const online = useOnline()
 
   const scrollBottom = useCallback(() => {
     if (messagesRef.current) messagesRef.current.scrollTop = messagesRef.current.scrollHeight
@@ -82,6 +84,14 @@ const ChatPanel = forwardRef(function ChatPanel(
     addMessage('user', question)
     setInputVal('')
     setShowChips(false)
+
+    // Answering needs the backend. Say so plainly instead of firing a request
+    // that is guaranteed to fail and reporting it as "Something went wrong".
+    if (!online) {
+      addMessage('assistant', t(language, 'offlineChat'))
+      return
+    }
+
     setSending(true)
 
     try {

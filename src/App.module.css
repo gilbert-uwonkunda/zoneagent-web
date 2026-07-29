@@ -2,3 +2,31 @@
   position: fixed;
   inset: 0;
 }
+
+/* Offline notice.
+   Deliberately NOT a full-width strip at top:0 — the header already occupies
+   that band (absolute, top:0, 64px, z-index 1000) and a strip there hides the
+   logo and search. The bottom edge is taken too (map hint + FAB). So this is a
+   pill floating just beneath the header, clear of both.
+   z-index sits above the FAB (1500) but below the chat panel (2000), which
+   surfaces its own offline message when open. */
+.offlineBanner {
+  position: fixed;
+  top: calc(64px + env(safe-area-inset-top, 0px) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1600;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: calc(100vw - 32px);
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #B45309;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}

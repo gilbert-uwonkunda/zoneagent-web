@@ -6,6 +6,7 @@ import ChatPanel from './components/ChatPanel'
 import { API_BASE_URL } from './constants/zoneColors'
 import { queryZoneAtPoint } from './services/arcgisClient'
 import { t } from './constants/i18n'
+import { useOnline } from './hooks/usePWA'
 import styles from './App.module.css'
 
 export default function App() {
@@ -17,13 +18,15 @@ export default function App() {
   const [location, setLocation]       = useState(null)
   const [zoning, setZoning]           = useState(null)
   const [loadingZone, setLoadingZone] = useState(false)
+  const online = useOnline()
 
-  // Warm up the backend as soon as the user enters the app
-  // so Claude AI responses don't suffer Render cold-start delay
+  // Warm up the backend as soon as the user enters the app so Claude responses
+  // don't pay the Render free-tier cold start (~50s after 15 min idle).
+  // Pointless while offline, so skip it and retry when connectivity returns.
   useEffect(() => {
-    if (!appStarted) return
+    if (!appStarted || !online) return
     fetch(`${API_BASE_URL}/health`).catch(() => {})
-  }, [appStarted])
+  }, [appStarted, online])
 
   function enterApp() {
     setAppStarted(true)
@@ -96,6 +99,14 @@ export default function App() {
 
   return (
     <div className={styles.app}>
+      {!online && (
+        <div className={styles.offlineBanner} role="status" aria-live="polite">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M24 8.98A16.88 16.88 0 0012 4C7.31 4 3.07 5.9 0 8.98L12 21l2.8-2.8v-1.6l-1.4-1.4-1.4 1.4-7.3-7.3a12.9 12.9 0 0116.6 0l-1.6 1.6 1.4 1.4L24 8.98zM19 12l-1.4 1.4L21 16.8 22.4 15.4 19 12zm-2.8 4.2l-1.4 1.4 3.4 3.4 1.4-1.4-3.4-3.4z"/>
+          </svg>
+          <span>{t(language, 'offlineBanner')}</span>
+        </div>
+      )}
       <MapView
         language={language}
         onMapClick={handleMapClick}

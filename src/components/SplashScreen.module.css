@@ -153,3 +153,39 @@
 }
 
 .enterBtn:active { transform: translateY(0); }
+
+/* Secondary install affordance — deliberately quieter than .enterBtn so it
+   never competes with the primary "Start" action. */
+.installBtn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid var(--brand);
+  border-radius: var(--radius);
+  color: var(--brand);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.installBtn:hover  { background: var(--brand-glow); }
+.installBtn:active { transform: translateY(1px); }
+
+/* iOS cannot trigger an install programmatically, so this is guidance only. */
+.installHint {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-muted, #94A3B8);
+  text-align: center;
+}
