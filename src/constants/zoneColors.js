@@ -53,4 +53,7 @@ export const ZONE_COLORS = {
   'WR-Waterbody zone':                                 '#A0B4E8',
 }
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://cok-development-assistant.onrender.com/api'
+// Set at build time from the VITE_API_BASE_URL repo variable (see
+// .github/workflows/deploy.yml, which fails the build if it is missing).
+// The literal below is only a local-dev convenience.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://zoneagent-backend.onrender.com/api'
