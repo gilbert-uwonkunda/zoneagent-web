@@ -27,6 +27,13 @@ What You Can Ask:
 • Is this zone suitable for commercial use?
 
 Type your question below.`,
+    chips: [
+      'What types of buildings are permitted here?',
+      'What is the maximum FAR and building coverage?',
+      'What are the setback requirements?',
+      'Do I need a permit to build here?',
+    ],
+    coordsCopied: 'Coordinates copied!',
     outsideKigali: 'This location is outside Kigali zoning coverage.\n\nPlease select a location within Kigali City.',
     error: 'Something went wrong. Please try again.',
     noZoning: 'No zoning data available for this location.',
@@ -67,6 +74,13 @@ Ibyo Ushobora Kubaza:
 • Ese hashobora gukoreshwa mu bucuruzi?
 
 Andika ikibazo cyawe hano.`,
+    chips: [
+      'Ni ubuhe bwubatsi bwemewe aha?',
+      'Ni iki FAR ndetse n\'imipaka yo kubaka?',
+      'Ni izihe ntera zabisabwa?',
+      'Mbusige ruhushya kubaka aha?',
+    ],
+    coordsCopied: 'Aderesi yakopiwe!',
     outsideKigali: "Aha hantu ni inyuma y'imiyoborere ya Kigali.",
     error: 'Habaye ikibazo. Ongera ugerageze.',
     noZoning: "Nta makuru y'imiyoborere.",
@@ -107,6 +121,13 @@ Questions Possibles:
 • Usage commercial possible?
 
 Tapez votre question.`,
+    chips: [
+      'Quels bâtiments sont autorisés ici?',
+      'Quel est le FAR et le taux de couverture max?',
+      'Quelles sont les exigences de recul?',
+      'Ai-je besoin d\'un permis pour construire?',
+    ],
+    coordsCopied: 'Coordonnées copiées!',
     outsideKigali: 'Hors zone de Kigali.',
     error: 'Erreur. Réessayez.',
     noZoning: 'Pas de données.',

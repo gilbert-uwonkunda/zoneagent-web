@@ -3,9 +3,17 @@ import L from 'leaflet'
 import { t } from '../constants/i18n'
 import styles from './MapView.module.css'
 
+// Kigali City sector boundaries — filtered to the 3 Kigali districts
+const SECTORS_URL =
+  'https://services5.arcgis.com/deNm5epdmeZgcm16/arcgis/rest/services/' +
+  'Sector_Boundary_2022/FeatureServer/1/query?' +
+  'outFields=Sector,District&' +
+  "where=District%20IN%20('Nyarugenge'%2C'Gasabo'%2C'Kicukiro')&" +
+  'f=geojson'
+
 export default function MapView({ language, onMapClick, showHint, onFabClick, showFab }) {
-  const mapRef     = useRef(null)
-  const markerRef  = useRef(null)
+  const mapRef      = useRef(null)
+  const markerRef   = useRef(null)
   const instanceRef = useRef(null)
 
   // Init map once
@@ -27,6 +35,39 @@ export default function MapView({ language, onMapClick, showHint, onFabClick, sh
       attribution: '© Google',
       maxZoom: 20,
     }).addTo(map)
+
+    // Load Kigali City sector boundaries
+    fetch(SECTORS_URL)
+      .then(r => r.json())
+      .then(geojson => {
+        // Add custom tooltip style once
+        if (!document.getElementById('za-sector-style')) {
+          const s = document.createElement('style')
+          s.id = 'za-sector-style'
+          s.textContent = `.sector-label { background: transparent; border: none; box-shadow: none; color: #fff; font-size: 10px; font-weight: 700; padding: 0; white-space: nowrap; -webkit-text-stroke: 2.5px rgba(0,0,0,0.85); paint-order: stroke fill; text-shadow: none; letter-spacing: 0.3px; }`
+          document.head.appendChild(s)
+        }
+
+        L.geoJSON(geojson, {
+          style: {
+            color: '#ffffff',
+            weight: 1.2,
+            opacity: 0.5,
+            fillOpacity: 0,
+          },
+          onEachFeature: (feature, layer) => {
+            const label = feature.properties?.Sector || feature.properties?.sector || ''
+            if (label) {
+              layer.bindTooltip(label, {
+                permanent: true,
+                direction: 'center',
+                className: 'sector-label',
+              })
+            }
+          },
+        }).addTo(map)
+      })
+      .catch(() => {}) // sector layer is decorative — fail silently
 
     setTimeout(() => map.invalidateSize(), 100)
     instanceRef.current = map
@@ -53,6 +94,7 @@ export default function MapView({ language, onMapClick, showHint, onFabClick, sh
     const map = instanceRef.current
     if (!map) return
     if (markerRef.current) map.removeLayer(markerRef.current)
+
     const icon = L.divIcon({
       className: '',
       html: `<div style="width:32px;height:32px;background:#14B8A6;border:3px solid white;border-radius:50%;box-shadow:0 4px 12px rgba(20,184,166,0.5);display:flex;align-items:center;justify-content:center;">
@@ -61,7 +103,21 @@ export default function MapView({ language, onMapClick, showHint, onFabClick, sh
       iconSize: [32, 32],
       iconAnchor: [16, 16],
     })
-    markerRef.current = L.marker(latlng, { icon }).addTo(map)
+
+    const marker = L.marker(latlng, { icon }).addTo(map)
+
+    marker.on('contextmenu', () => {
+      const text = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`
+      navigator.clipboard.writeText(text).then(() => {
+        marker.bindPopup(
+          '<div style="font-size:12px;font-weight:600;white-space:nowrap;padding:2px 4px">Coordinates copied</div>',
+          { closeButton: false, autoClose: true, offset: [0, -16] }
+        ).openPopup()
+        setTimeout(() => marker.closePopup(), 1800)
+      })
+    })
+
+    markerRef.current = marker
   }
 
   // Expose flyTo for parent-triggered navigation

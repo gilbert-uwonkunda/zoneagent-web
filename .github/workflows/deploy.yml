@@ -1,0 +1,74 @@
+name: Deploy to GitHub Pages
+
+# Builds the site and publishes it to the gh-pages branch, which is what Pages
+# serves (source: gh-pages / custom domain zoneagent.live).
+#
+# This replaces running `npm run deploy` locally. The backend URL is injected at
+# build time from the VITE_API_BASE_URL repository variable, so pointing the app
+# at a new backend is a settings change, not a code change.
+#   Settings -> Secrets and variables -> Actions -> Variables
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Needed to force-push the built site to the gh-pages branch.
+permissions:
+  contents: write
+
+# Never let two deploys race to publish gh-pages.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Fail loudly rather than silently shipping the fallback URL baked into
+      # src/constants/zoneColors.js — a wrong API URL is invisible until a user
+      # actually asks a question and the request fails.
+      - name: Require backend URL
+        run: |
+          if [ -z "${{ vars.VITE_API_BASE_URL }}" ]; then
+            echo "::error::Repository variable VITE_API_BASE_URL is not set."
+            echo "Set it under Settings > Secrets and variables > Actions > Variables."
+            echo "Expected form: https://<render-service>.onrender.com/api"
+            exit 1
+          fi
+          echo "Building against ${{ vars.VITE_API_BASE_URL }}"
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+
+      # public/CNAME is copied into dist by Vite, which preserves the custom
+      # domain across deploys. Assert it, because losing it unbinds
+      # zoneagent.live and invalidates the TLS certificate.
+      - name: Verify CNAME survived the build
+        run: |
+          test -f dist/CNAME || { echo "::error::dist/CNAME missing — custom domain would break"; exit 1; }
+          echo "CNAME: $(cat dist/CNAME)"
+
+      - name: Publish to gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd dist
+          git init -b gh-pages
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Deploy ${GITHUB_SHA::7}"
+          git push --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

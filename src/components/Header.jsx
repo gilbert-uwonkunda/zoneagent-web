@@ -17,8 +17,9 @@ export default function Header({ language, onLocationSelect }) {
     setStatus('searching')
     setOpen(true)
     try {
-      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)},Kigali,Rwanda&format=json&limit=5&countrycodes=rw&viewbox=29.8,-2.2,30.3,-1.7&bounded=1`
-      const res  = await fetch(url, { headers: { 'User-Agent': 'ZoneAgent/1.0' } })
+      // viewbox = west,north,east,south  (north = less negative lat = -1.7)
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)},Kigali,Rwanda&format=json&limit=5&countrycodes=rw&viewbox=29.8,-1.7,30.3,-2.2&bounded=1`
+      const res  = await fetch(url)
       const data = await res.json()
       if (data.length === 0) { setStatus('empty'); setResults([]); return }
       setResults(data)
