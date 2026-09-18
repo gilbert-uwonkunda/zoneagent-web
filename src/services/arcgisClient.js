@@ -51,6 +51,11 @@ async function fetchWithTimeout(url, ms) {
 }
 
 async function fetchFromArcGIS(lat, lng) {
+  // resultRecordCount here made the service apply it BEFORE the spatial
+  // filter, so it could cap/paginate the raw table scan and return
+  // exceededTransferLimit with zero features even when the point's zone
+  // genuinely exists — omit it and just take the first (and only expected)
+  // match.
   const params = new URLSearchParams({
     geometry:          JSON.stringify({ x: lng, y: lat }),
     geometryType:      'esriGeometryPoint',
@@ -58,7 +63,6 @@ async function fetchFromArcGIS(lat, lng) {
     spatialRel:        'esriSpatialRelIntersects',
     outFields:         OUT_FIELDS,
     returnGeometry:    'false',
-    resultRecordCount: '1',
     f:                 'json',
   })
 
