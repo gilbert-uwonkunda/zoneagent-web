@@ -530,6 +530,8 @@ const ChatPanel = forwardRef(function ChatPanel(
         </div>
       )}
 
+      <div className={styles.aiNotice}>{t(language, 'aiNotice')}</div>
+
       {/* Input */}
       <div className={styles.inputArea}>
         <textarea

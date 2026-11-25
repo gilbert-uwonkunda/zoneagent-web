@@ -31,8 +31,11 @@ export default function MapView({ language, onMapClick, showHint, onFabClick, sh
 
     L.control.zoom({ position: 'bottomright' }).addTo(map)
 
-    L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-      attribution: '© Google',
+    // Esri tiles over Kigali stop at z19 (z20 returns a "no data" placeholder),
+    // so z20 upscales z19 instead of showing blank tiles.
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+      maxNativeZoom: 19,
       maxZoom: 20,
     }).addTo(map)
 
